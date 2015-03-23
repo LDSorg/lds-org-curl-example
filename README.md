@@ -34,7 +34,7 @@ Assuming a valid login, this will set the appropriate cookies into `./my-credent
 
 For the ease of copy and paste, first set your username and passphrase as variables in your shell:
 
-```
+```bash
 LDS_USERNAME='joesmith'
 LDS_PASSPHRASE='super secret'
 ```
@@ -84,7 +84,7 @@ LDS_HOME_WARD_ID='123456'
 
 **emails** and **phone numbers**
 
-```
+```bash
 curl "https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist-with-callings/${LDS_HOME_WARD_ID}" \
   --cookie ./my-session.txt \
   --cookie-jar ./my-session.txt
@@ -92,7 +92,7 @@ curl "https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist
 
 It can be helpful to pipe this through `python -m json.tool` and save it to a file for easy reference:
 
-```
+```bash
 curl "https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist-with-callings/${LDS_HOME_WARD_ID}" \
   --cookie ./my-session.txt \
   --cookie-jar ./my-session.txt \
@@ -104,9 +104,9 @@ curl "https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist
 4. Familiy and Individual Photos
 ------------
 
-**Family Photo**
+### Family Photo
 
-```
+```bash
 curl "https://lds.org/directory/services/ludrs/photo/url/${LDS_INDIVIDUAL_ID}/household" \
   --cookie ./my-session.txt \
   --cookie-jar ./my-session.txt
@@ -114,9 +114,19 @@ curl "https://lds.org/directory/services/ludrs/photo/url/${LDS_INDIVIDUAL_ID}/ho
 
 **NOTE**: The `houseOfHouseholdId` is *usually* the same as the `individualId`, but it's actually the church member of the household, which may be the wife or one of the children.
 
-** Individual Photo**
+### Family Photo Directory
 
+This is the web API, not the mobile API, but it'll give you all of the family photo urls in one shot, which is a plus.
+
+```bash
+curl "https://www.lds.org/directory/services/ludrs/mem/wardDirectory/photos/${LDS_HOME_WARD_ID}" \
+  --cookie ./my-session.txt \
+  --cookie-jar ./my-session.txt
 ```
+
+### Individual Photo
+
+```bash
 curl "https://lds.org/directory/services/ludrs/photo/url/${LDS_INDIVIDUAL_ID}/individual" \
   --cookie ./my-session.txt \
   --cookie-jar ./my-session.txt
@@ -124,21 +134,81 @@ curl "https://lds.org/directory/services/ludrs/photo/url/${LDS_INDIVIDUAL_ID}/in
 
 **NOTE**: I have no idea how you get the **Bishopric's Photos** in a **YSA ward**...
 
-**Family Photo Directory**
+### Individual Photo Directory
 
-This is the web API, not the mobile API, but it'll give you all of the family photo urls in one shot, which is a plus.
+Instead of making hundreds of requests, I've successfully tested passing in about 170 ids at a time using commas:
 
-```
-curl "https://www.lds.org/directory/services/ludrs/mem/wardDirectory/photos/${LDS_HOME_WARD_ID}" \
+```bash
+curl "https://lds.org/directory/services/ludrs/photo/url/${ID_1},${ID_2},${ID_3}/individual" \
   --cookie ./my-session.txt \
   --cookie-jar ./my-session.txt
+```
+
+Here's the script I used to make a large request from the `member-detaillist-with-callings` resources:
+
+```javascript
+var ward = require('./ward.json');
+var ids = [];
+
+ward.households.forEach(function (h) {
+  if (h.headOfHouse && h.headOfHouse.individualId) {
+    ids.push(h.headOfHouse.individualId);
+  }
+});
+
+console.log('ids.length', ids.length);
+
+function buildPhotoUrls(ids) {
+  var maxLen = 2000;
+  var urlPart1 = 'https://www.lds.org/mobiledirectory/services/ludrs/1.1/photo/url/';
+  var urlPart2 = '/individual';
+  var urls = [];
+  var len = urlPart1.length + urlPart2.length;
+  var batch = [];
+  // starts at -1 because there is no comma on first element
+  var batchLen = -1;
+
+  if (!ids.length) {
+    return urls;
+  }
+
+  ids.forEach(function (id) {
+    id = id.toString();
+    // NOTE +1 is for comma
+    if (len + batchLen + id.length + 1 < maxLen) {
+      batch.push(id);
+      batchLen += id.length + 1;
+    } else {
+      console.log('batch.length', batch.length);
+      urls.push(urlPart1 + batch.join(',') + urlPart2);
+      batch = [];
+      batchLen = -1;
+    }
+  });
+
+  if (batch.length) {
+    console.log(batch.length);
+    urls.push(urlPart1 + batch.join(',') + urlPart2);
+  }
+
+  console.log('urls.length', urls.length);
+  return urls;
+}
+
+buildPhotoUrls(ids).forEach(function (url) {
+  console.log(
+      'curl ' + url + ' \\'
+    + '\n    --cookie-jar ./my-session.txt \\'
+    + '\n    --cookie ./my-session.txt'
+    )
+});
 ```
 
 X. Other URLs
 -------------
 
-I'm not done with this tutorial yet, but many of the URLs are listed here:
+As stated previously, many of the URLs for the mobile API endpoints are listed here:
 <https://tech.lds.org/mobile/ldstools/config.json>
 
-Many of them aro also listed here:
+Many of the web API endpoints are also listed here:
 <https://github.com/LDSorg/lds.org-api-documentation>
