@@ -90,6 +90,15 @@ curl "https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist
   --cookie-jar ./my-session.txt
 ```
 
+It can be helpful to pipe this through `python -m json.tool` and save it to a file for easy reference:
+
+```
+curl "https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist-with-callings/${LDS_HOME_WARD_ID}" \
+  --cookie ./my-session.txt \
+  --cookie-jar ./my-session.txt \
+  | python -m json.tool > ./my-ward.json
+```
+
 **NOTE**: In a YSA ward the Bishopric (external home ward) will be included, but their ids will be malformed (no household id).
 
 4. Familiy and Individual Photos
@@ -113,7 +122,7 @@ curl "https://lds.org/directory/services/ludrs/photo/url/${LDS_INDIVIDUAL_ID}/in
   --cookie-jar ./my-session.txt
 ```
 
-**NOTE**: I have no idea how you get the 
+**NOTE**: I have no idea how you get the **Bishopric's Photos** in a **YSA ward**...
 
 **Family Photo Directory**
 
