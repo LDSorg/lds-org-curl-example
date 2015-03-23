@@ -12,10 +12,20 @@ OAuth2 API at <https://lds.io>
 
 Consider using the OAuth2 API. There are complete zero-config examples that can work from a single install script.
 
-LDS.org with cURL
+Exploring the LDS.org Mobile API with cURL
 =================
 
 **NOTE**: Some APIs have a trailing slash. Some don't. **It matters which is which**.
+
+The Mobile API is listed here:
+
+<https://tech.lds.org/mobile/ldstools/config.json>
+
+And there is also some documentation available here (scroll to the bottom):
+
+<http://tech.lds.org/wiki/LDS_Tools_Web_Services>
+
+Many of the resources are only for leadership or are old resources that exist for backwards compatibility with old apps on platforms that are no longer supported (maybe Blackberry 10 / webOS) API
 
 1. Login
 --------
@@ -69,11 +79,48 @@ LDS_INDIVIDUAL_ID='1234567890'
 LDS_HOME_WARD_ID='123456'
 ```
 
-3. Your Ward
+3. Ward Directory - Contacts and Callings
 ------------
+
+**emails** and **phone numbers**
 
 ```
 curl "https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist-with-callings/${LDS_HOME_WARD_ID}" \
+  --cookie ./my-session.txt \
+  --cookie-jar ./my-session.txt
+```
+
+**NOTE**: In a YSA ward the Bishopric (external home ward) will be included, but their ids will be malformed (no household id).
+
+4. Familiy and Individual Photos
+------------
+
+**Family Photo**
+
+```
+curl "https://lds.org/directory/services/ludrs/photo/url/${LDS_INDIVIDUAL_ID}/household" \
+  --cookie ./my-session.txt \
+  --cookie-jar ./my-session.txt
+```
+
+**NOTE**: The `houseOfHouseholdId` is *usually* the same as the `individualId`, but it's actually the church member of the household, which may be the wife or one of the children.
+
+** Individual Photo**
+
+```
+curl "https://lds.org/directory/services/ludrs/photo/url/${LDS_INDIVIDUAL_ID}/individual" \
+  --cookie ./my-session.txt \
+  --cookie-jar ./my-session.txt
+```
+
+**NOTE**: I have no idea how you get the 
+
+**Family Photo Directory**
+
+This is the web API, not the mobile API, but it'll give you all of the family photo urls in one shot, which is a plus.
+
+```
+curl "https://www.lds.org/directory/services/ludrs/mem/wardDirectory/photos/${LDS_HOME_WARD_ID}" \
   --cookie ./my-session.txt \
   --cookie-jar ./my-session.txt
 ```
