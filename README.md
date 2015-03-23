@@ -7,6 +7,11 @@ Consider using using the **OAuth2 API at <https://lds.io>** instead.
 
 This tutorial is provided for the sake of prototyping and exploring, not for production use.
 
+OAuth2 API at <https://lds.io>
+=================
+
+Consider using the OAuth2 API. There are complete zero-config examples that can work from a single install script.
+
 LDS.org with cURL
 =================
 
