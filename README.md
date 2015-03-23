@@ -204,6 +204,10 @@ buildPhotoUrls(ids).forEach(function (url) {
 });
 ```
 
+It's a bit slow. Each request of ~170 ids takes about 6 seconds.
+
+The good news is that you can run the requests in parallel, so you can still get the entire ward in about 6 seconds, which isn't too bad. 
+
 X. Other URLs
 -------------
 
