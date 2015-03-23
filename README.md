@@ -57,7 +57,7 @@ curl https://www.lds.org/mobiledirectory/services/v2/ldstools/current-user-detai
   --cookie-jar ./my-session.txt
 ```
 
-That will give you your `individualId` which you will need for the next request
+That will give you your `homeUnitNbr` and `individualId` which you will need for the next request
 
 ```bash
 LDS_INDIVIDUAL_ID='1234567890'
