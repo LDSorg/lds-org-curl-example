@@ -112,6 +112,13 @@ curl "https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist
 
 Same as the above, except substituting `${LDS_HOME_STAKE_ID}` instead of `${LDS_HOME_WARD_ID}`.
 
+```bash
+curl "https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist-with-callings/${LDS_HOME_STAKE_ID}" \
+  -b ./my-session.txt \
+  -c ./my-session.txt \
+  | python -m json.tool > ./my-ward.json
+```
+
 5. Familiy and Individual Photos
 ------------
 
@@ -218,6 +225,36 @@ buildPhotoUrls(ids).forEach(function (url) {
 It's a bit slow. Each request of ~170 ids takes about 6 seconds.
 
 The good news is that you can run the requests in parallel, so you can still get the entire ward in about 6 seconds, which isn't too bad. 
+
+6. Determining Gender
+------------
+
+You can't. Well, you can... but not in a reliable fashion.
+
+**For MEMBERS in the ward**:
+
+* https://www.lds.org/directory/services/ludrs/1.1/unit/roster/${LDS_HOME_WARD_ID}/ADULTS
+* https://www.lds.org/directory/services/ludrs/1.1/unit/roster/${LDS_HOME_WARD_ID}/HIGH_PRIEST
+* https://www.lds.org/directory/services/ludrs/1.1/unit/roster/${LDS_HOME_WARD_ID}/ELDER
+* https://www.lds.org/directory/services/ludrs/1.1/unit/roster/${LDS_HOME_WARD_ID}/PRIEST
+* https://www.lds.org/directory/services/ludrs/1.1/unit/roster/${LDS_HOME_WARD_ID}/TEACHER
+* https://www.lds.org/directory/services/ludrs/1.1/unit/roster/${LDS_HOME_WARD_ID}/DEACON
+* https://www.lds.org/directory/services/ludrs/1.1/unit/roster/${LDS_HOME_WARD_ID}/RELIEF_SOCIETY
+* https://www.lds.org/directory/services/ludrs/1.1/unit/roster/${LDS_HOME_WARD_ID}/LAUREL
+* https://www.lds.org/directory/services/ludrs/1.1/unit/roster/${LDS_HOME_WARD_ID}/MIA_MAID
+* https://www.lds.org/directory/services/ludrs/1.1/unit/roster/${LDS_HOME_WARD_ID}/BEEHIVE
+
+You **cannot** rely on `houseOfHouse`, nor **spouse**, because sometimes the active member is considered to be the headOfHouse and sometimes the husband is considered the head of house.
+
+**For stake**:
+
+* https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist-with-callings/${LDS_HOME_STAKE_ID}
+
+You can **do a best guess** based on the calling, but although the urls above "work", they always return an empty array.
+
+*workaround*
+
+Normally you could iterate through all of the wards to find which ward the person belongs to, but since stake officials often serve outside of their home stake (especially YSA wards), this approach is probably not worth the effort of prefetching that data.
 
 X. Other URLs
 -------------
