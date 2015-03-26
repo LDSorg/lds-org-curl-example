@@ -45,7 +45,6 @@ Then proceed to login:
 curl https://signin.lds.org/login.html \
   --request POST \
   --location \
-  --cookie ./my-session.txt \
   --cookie-jar ./my-session.txt \
   --data "username=${LDS_USERNAME}&password=${LDS_PASSPHRASE}"
 ```
@@ -56,7 +55,6 @@ The shorthand version of that command would be:
 curl https://signin.lds.org/login.html \
   -X POST \
   -L \
-  -b ./my-session.txt \
   -c ./my-session.txt \
   -d "username=${USERNAME}&password=${PASSPHRASE}"
 ```
@@ -70,6 +68,14 @@ Since it takes several queries and a decent number of loops to get a full profil
 curl https://www.lds.org/mobiledirectory/services/v2/ldstools/current-user-detail \
   --cookie ./my-session.txt \
   --cookie-jar ./my-session.txt
+```
+
+Or, in shorthand:
+
+```bash
+curl https://www.lds.org/mobiledirectory/services/v2/ldstools/current-user-detail \
+  -b ./my-session.txt \
+  -c ./my-session.txt
 ```
 
 That will give you your `homeUnitNbr` and `individualId` which you will need for the next request
