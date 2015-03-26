@@ -101,7 +101,12 @@ curl "https://www.lds.org/mobiledirectory/services/v2/ldstools/member-detaillist
 
 **NOTE**: In a YSA ward the Bishopric (external home ward) will be included, but their ids will be malformed (no household id).
 
-4. Familiy and Individual Photos
+4. Stake Directory - Contacts and Callings
+------------
+
+Same as the above, except substituting `${LDS_HOME_STAKE_ID}` instead of `${LDS_HOME_WARD_ID}`.
+
+5. Familiy and Individual Photos
 ------------
 
 ### Family Photo
