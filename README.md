@@ -3,7 +3,7 @@ READ THIS FIRST
 
 You should not need to access the LDS.org API directly with cURL.
 
-Consider using using the **OAuth2 API at <https://lds.io>** instead.
+Consider using using the **API Explorer at <https://lds.io>** instead.
 
 This tutorial is provided for the sake of prototyping and exploring, not for production use.
 
